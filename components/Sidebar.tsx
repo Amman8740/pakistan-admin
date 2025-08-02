@@ -14,9 +14,11 @@ import Link from "next/link";
 import { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 export default function Sidebar({isOpen}: {isOpen: boolean}) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const router = useRouter();
   return (
     <>
       {/* Sidebar */}
@@ -50,9 +52,9 @@ export default function Sidebar({isOpen}: {isOpen: boolean}) {
                 </button>
                 {isDropdownOpen && (
                   <div className="ml-6 flex flex-col gap-2 text-gray-700">
-                    <SidebarLink icon={<PanelTop size={16}/>} label="Panels Post" href="#" small/>
-                    <SidebarLink icon={<BatteryCharging size={16}/>} label="Batteries Post" href="#" small/>
-                    <SidebarLink icon={<HardDrive size={16}/>} label="Inverter Posts" href="#" small/>
+                    <SidebarLink icon={<PanelTop size={16}/>} label="Panels Post" href="#" small onClick={()=>router.push("/posts/panels")}/>
+                    <SidebarLink icon={<BatteryCharging size={16}/>} label="Batteries Post" href="#" small onClick={()=>router.push("/posts/batteries")}/>
+                    <SidebarLink icon={<HardDrive size={16}/>} label="Inverter Posts" href="#" small onClick={()=>router.push("/posts/inverters")}/>
                     </div>
                 )}
                 </nav>
@@ -70,17 +72,17 @@ export default function Sidebar({isOpen}: {isOpen: boolean}) {
     </>
   );
 }
-function SidebarLink({ icon, label, href, small = false, className = "" }: { icon: React.ReactNode; label: string; href: string; small?: boolean; className?: string; }) {
+function SidebarLink({ icon, label, href, small = false, className = "", onClick}: { icon: React.ReactNode; label: string; href: string; small?: boolean; className?: string; onClick?: ()=>void;}) {
     return (
-      <Link
-        href={href}
-        className={`flex items-center gap-2 px-2 py-2 rounded-lg text-gray-400 hover:bg-gray-100 transition ${
-          small ? "text-sm pl-6" : "text-base"
-        } ${className}`}
-      >
-        {icon}
-        {label}
-      </Link>
+     <button
+      onClick={onClick ? onClick : () => window.location.href = href}
+      className={`w-full text-left flex items-center gap-2 px-2 py-2 rounded-lg text-gray-400 hover:bg-gray-100 transition ${
+        small ? "text-sm pl-6" : "text-base"
+      } ${className}`}
+    >
+      {icon}
+      {label}
+    </button>
     );
   }
   

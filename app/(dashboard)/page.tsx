@@ -130,10 +130,12 @@ export default function DashboardHome() {
     <PostsDropdownCard />
   </div>
   <div className="w-[60%] ">
-  <OverViewCard title="Profile Verifications" icon={<ShieldCheck size={25}/>} className="bg-gray-100 cursor-pointer hover:bg-gray-200 transition-all duration-300 ease-in-out shadow-lg transform hover:scale-105"/>
+  <OverViewCard title="Profile Verifications" icon={<ShieldCheck size={25}/>} className="bg-gray-100 cursor-pointer hover:bg-gray-200 transition-all duration-300 ease-in-out shadow-lg transform hover:scale-105"
+  onClick={()=>router.push("/verifications")}
+  />
   </div>
   <div className="w-[60%]">
-  <OverViewCard title="Some Other Section" icon={<Bell size={25}/>} className="bg-gray-100 cursor-pointer hover:bg-gray-200 transition-all duration-300 ease-in-out shadow-lg transform hover:scale-105"/>
+  <OverViewCard title="Notifications" icon={<Bell size={25}/>} className="bg-gray-100 cursor-pointer hover:bg-gray-200 transition-all duration-300 ease-in-out shadow-lg transform hover:scale-105"/>
   </div>
 </section>
 </>
