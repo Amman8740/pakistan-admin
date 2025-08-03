@@ -14,9 +14,9 @@ const dummyUsers = [
   { id: 4, name: "Ahmed", phone: "+923004445566", status: "rejected" },
 ];
 export default function VerificationPage() {
-  const [activeTab, setActiveTab] = useState<
-    "pending" | "verified" | "rejected"
-  >("pending");
+  const TABS = ["pending", "verified", "rejected"] as const;
+  type TabType = (typeof TABS)[number];
+  const [activeTab, setActiveTab] = useState<TabType>("pending");
   const filteredUser = dummyUsers.filter((user) => user.status === activeTab);
   return (
     <div className="p-4 max-w-3xl mx-auto">
@@ -24,7 +24,7 @@ export default function VerificationPage() {
         Profile Verification
       </h1>
       <div className="flex justify-around border-b mb-4">
-        {["pending", "verified", "rejected"].map((tab) => (
+        {TABS.map((tab) => (
           <button
             key={tab}
             className={`py-2 text-sm font-medium ${
@@ -32,7 +32,7 @@ export default function VerificationPage() {
                 ? "border-b-2 border-green-500 text-green-600"
                 : "text-gray-500"
             }`}
-            onClick={() => setActiveTab(tab as any)}
+            onClick={() => setActiveTab(tab)}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
           </button>
@@ -40,10 +40,10 @@ export default function VerificationPage() {
       </div>
       <div className="space-y-3">
         {filteredUser.length === 0 ? (
-            <p>No user found in this category</p>
-        ):(
-            filteredUser.map((user)=>(
-                <div
+          <p>No user found in this category</p>
+        ) : (
+          filteredUser.map((user) => (
+            <div
               key={user.id}
               className="bg-gray-100 rounded-xl px-4 py-3 flex justify-between items-center shadow-sm"
             >
@@ -51,9 +51,11 @@ export default function VerificationPage() {
                 <p className="font-medium">{user.name}</p>
                 <p className="text-sm text-gray-600">{user.phone}</p>
               </div>
-              <span className="text-green-600 text-sm font-semibold capitalize">{user.status}</span>
+              <span className="text-green-600 text-sm font-semibold capitalize">
+                {user.status}
+              </span>
             </div>
-            ))
+          ))
         )}
       </div>
     </div>
