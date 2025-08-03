@@ -4,7 +4,6 @@ import InverterForm from "@/components/InverterForm";
 import PanelForm from "@/components/PanelForm";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { use } from "react";
 type Props = {
     params: {
         type:string;
@@ -12,7 +11,7 @@ type Props = {
 }
 
 export default function CreatePage ({params}: Props) {
-    const { type } = use(params);
+    const { type } = params;
     if (!["panel", "inverter", "battery"].includes(type)){
         notFound();
     }
