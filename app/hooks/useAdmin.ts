@@ -1,0 +1,31 @@
+"use client";
+
+import { getToken } from "@/lib/api"; // util to get token from localStorage
+
+const BASE_URL = "http://localhost:8001"; // or your production URL
+
+export const getAllUsers = async () => {
+  const token = getToken();
+  console.log("Using token:", token);
+  if (!token) throw new Error("No auth token found");
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/admin/getusers`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const json = await response.json();
+    console.log("Get users response:", json);
+
+    if (!response.ok) {
+      throw new Error(json.message || "Failed to fetch users");
+    }
+    return json.data;
+  } catch (err) {
+    console.error("Get users error:", err);
+    throw err;
+  }
+};

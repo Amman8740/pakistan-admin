@@ -1,37 +1,50 @@
 "use client";
 
+import { getAllUsers } from "@/app/hooks/useAdmin";
 import UserCard from "@/components/UserCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 type User= {
+  _id: string;
     name: string;
     phone: string;
+    status: "active" | "banned";
 }
-const initialActiveUsers: User[] = [
-    { name: "Shujaat Ali", phone: "+923454897189" },
-    { name: "Zeeshan Ahmed", phone: "+923454897189" },
-    { name: "vikesh kumar", phone: "+923008307770" },
-  ];
+// const initialActiveUsers: User[] = [
+//     { name: "Shujaat Ali", phone: "+923454897189" },
+//     { name: "Zeeshan Ahmed", phone: "+923454897189" },
+//     { name: "vikesh kumar", phone: "+923008307770" },
+//   ];
   
-  const initialBannedUsers: User[] = [
-    { name: "Shahheryar Nawab", phone: "+923006617464" },
-    { name: "Natasha Rehman", phone: "+923224453734" },
-    { name: "Antonio Marrazzo", phone: "+923369171247" },
-  ];
-
+//   const initialBannedUsers: User[] = [
+//     { name: "Shahheryar Nawab", phone: "+923006617464" },
+//     { name: "Natasha Rehman", phone: "+923224453734" },
+//     { name: "Antonio Marrazzo", phone: "+923369171247" },
+//   ];
 export default function UserPage (){
     const [activeTab, setActiveTab] = useState<"active" | "banned">("active");
     const [search, setSearch] = useState("")
-    const [activeUsers, setActiveUsers] = useState<User[]>(initialActiveUsers);
-  const [bannedUsers, setBannedUsers] = useState<User[]>(initialBannedUsers);
+    const [activeUsers, setActiveUsers] = useState<User[]>([]);
+  const [bannedUsers, setBannedUsers] = useState<User[]>([]);
+  useEffect(() => {
+  getAllUsers()
+    .then((data) => {
+      const active = data.filter((user: User) => user.status === "active");
+      const banned = data.filter((user: User) => user.status === "banned");
+      setActiveUsers(active);
+      setBannedUsers(banned);
+    })
+    .catch((err) => {
+      console.error("Failed to load users:", err);
+    });
+}, []);
   const handleBan = (user: User) => {
-    setActiveUsers((prev) => prev.filter((u) => u.phone !== user.phone));
-    setBannedUsers((prev) => [...prev, user]);
-  };
-
-  const handleUnban = (user: User) => {
-    setBannedUsers((prev) => prev.filter((u) => u.phone !== user.phone));
-    setActiveUsers((prev) => [...prev, user]);
-  };
+  setActiveUsers((prev) => prev.filter((u) => u._id !== user._id));
+  setBannedUsers((prev) => [...prev, { ...user, status: "banned" }]);
+};
+const handleUnban = (user: User) => {
+  setBannedUsers((prev) => prev.filter((u) => u._id !== user._id));
+  setActiveUsers((prev) => [...prev, { ...user, status: "active" }]);
+};
 
   const displayedUsers =
     activeTab === "active" ? activeUsers : bannedUsers;
@@ -81,13 +94,11 @@ export default function UserPage (){
           {filteredUsers.length > 0 ? (
             filteredUsers.map((user, index) => (
               <UserCard
-                key={index}
-                name={user.name}
-                phone={user.phone}
-                onBan={() =>
-                  activeTab === "active" ? handleBan(user) : handleUnban(user)
-                }
-                isBanned={activeTab === "banned"}
+  key={user._id}
+  name={user.name}
+  phone={user.phone}
+  onBan={() => (activeTab === "active" ? handleBan(user) : handleUnban(user))}
+  isBanned={activeTab === "banned"}
               />
             ))
           ) : (

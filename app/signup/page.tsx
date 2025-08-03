@@ -8,13 +8,13 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
 
   const handleSignup = () => {
-    if (email && password) {
-      // Simulate signup success
-      localStorage.setItem("psm-auth", "true");
+    // if (email && password) {
+    //   // Simulate signup success
+    //   localStorage.setItem("psm-auth", "true");
 
-      // Redirect to dashboard or login
-      router.push("/login"); // or "/dashboard" if you want to auto-login
-    }
+    //   // Redirect to dashboard or login
+    //   router.push("/login"); // or "/dashboard" if you want to auto-login
+    // }
   };
 
   return (
