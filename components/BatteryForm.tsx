@@ -7,7 +7,7 @@ const BatteryForm = () => {
         brand: "",
         name: "",
         quantity: "",
-        priceRange: "",
+        priceRange: "",         
         location: "",
         avability: "",
     })
