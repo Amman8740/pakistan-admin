@@ -1,4 +1,3 @@
-"use client";
 import BatteryForm from "@/components/BatteryForm";
 import InverterForm from "@/components/InverterForm";
 import PanelForm from "@/components/PanelForm";
