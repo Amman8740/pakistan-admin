@@ -1,13 +1,15 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BrandFormModal from "./BrandFormodal";
 import BrandItem from "./BrandItem";
+import { getAllBrands } from "@/app/hooks/useBrands";
 
 type Brand = {
-  brand: string;
-  entries: {
-    name: string;
-    models: string[];
+  _id: string;
+  brandName: string;
+  models: {
+    modelName: string;
+    modelDetail: string;
   }[];
 };
 
@@ -19,6 +21,16 @@ export default function BrandManager({ category }: BrandManagerProps) {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [showForm, setShowForm] = useState(false);
 
+    useEffect(() => {
+    getAllBrands()
+      .then((res) => {
+        const filtered = res.filter((b) => b.category === category);
+        setBrands(filtered);
+      })
+      .catch((err) => {
+        console.error("Failed to load brands:", err);
+      });
+  }, [category]);
   const addBrand = (newBrand: Brand) => {
     setBrands((prev) => [...prev, newBrand]);
     setShowForm(false);
@@ -32,7 +44,7 @@ export default function BrandManager({ category }: BrandManagerProps) {
 
       {brands.map((brand, idx) => (
         <BrandItem
-          key={idx}
+          key={brand._id}
           data={brand}
           onDelete={() => setBrands((prev) => prev.filter((_, i) => i !== idx))}
         />
