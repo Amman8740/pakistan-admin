@@ -1,5 +1,6 @@
 "use client";
 import { getBrandsByAdmin } from "@/app/hooks/useBrands";
+import { getAllLocations } from "@/app/hooks/useLocations";
 import { createPanelPost } from "@/app/hooks/usePanel";
 import { useEffect, useState } from "react";
 type BrandWithModels = {
@@ -9,19 +10,34 @@ type BrandWithModels = {
   models: { modelName: string; modelDetail?: string }[];
 };
 const PanelForm = () => {
+  const [modelNames, setModelNames] = useState<string[]>([]);
+  const [modelVariants, setModelVariants] = useState<string[]>([]);
+  const [allModels, setAllModels] = useState<BrandWithModels[0]["models"]>([]);
   const [brands, setBrands] = useState<BrandWithModels[]>([]);
-  const [modelOptions, setModelOptions] = useState<string[]>([]);
+  const [locations, setLocations] = useState<{ _id: string; location: string }[]>(
+    []
+  );
   const [form, setForm] = useState({
-    type: "seller",
+    type: "Seller",
     brand: "",
     name: "",
+    variant: "",
     container: "container",
     quantity: "",
     priceRange: "",
     location: "",
     availability: "",
+    deliveryDate: "",
   });
   useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const result = await getAllLocations();
+        setLocations(result); // assuming data is [{ _id, name }]
+      } catch (err) {
+        console.error("Error loading locations:", err);
+      }
+    };
     const fetchBrands = async () => {
       try {
         const allBrands = await getBrandsByAdmin();
@@ -30,6 +46,7 @@ const PanelForm = () => {
         console.error("Failed to fetch brands:", error);
       }
     };
+    fetchLocations();
     fetchBrands();
   }, []);
 
@@ -43,9 +60,25 @@ const PanelForm = () => {
     }));
     if (name === "brand") {
       const selectedBrand = brands.find((b) => b.brandName === value);
-      const models = selectedBrand?.models?.map((m) => m.modelName) || [];
-      setModelOptions(models);
-      setForm((prev) => ({ ...prev, name: "" })); // reset selected model
+      const models = selectedBrand?.models || [];
+
+      const uniqueModelNames = [...new Set(models.map((m) => m.modelName))];
+
+      setAllModels(models); // store all models
+      setModelNames(uniqueModelNames); // show distinct modelNames
+      setModelVariants([]); // clear previous variants
+      setForm((prev) => ({ ...prev, name: "", variant: "" }));
+    }
+    if (name === "name") {
+      const variants = allModels
+        .filter((m) => m.modelName === value)
+        .map((m) => m.modelDetail || "");
+
+      setModelVariants(variants);
+      setForm((prev) => ({
+        ...prev,
+        variant: variants[0] || "", // optional: auto-select first
+      }));
     }
   };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -57,6 +90,7 @@ const PanelForm = () => {
         brand: form.brand,
         name: form.name,
         container: form.container,
+
         quantity: Number(form.quantity),
         priceMin: min,
         priceMax: max,
@@ -78,8 +112,8 @@ const PanelForm = () => {
           onChange={handleChange}
           className="w-full border rounded-2xl p-2"
         >
-          <option value="seller">Seller</option>
-          <option value="buyer">Buyer</option>
+          <option value="Seller">Seller</option>
+          <option value="Buyer">Buyer</option>
         </select>
       </div>
       <div>
@@ -107,9 +141,25 @@ const PanelForm = () => {
           className="w-full border rounded-2xl p-2"
         >
           <option value="">Select Model</option>
-          {modelOptions.map((model, idx) => (
-            <option key={idx} value={model}>
-              {model}
+          {modelNames.map((name, idx) => (
+            <option key={idx} value={name}>
+              {name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label className="block font-medium mb-1">Model Variant</label>
+        <select
+          name="variant"
+          value={form.variant}
+          onChange={handleChange}
+          className="w-full border rounded-2xl p-2"
+        >
+          <option value="">Select Variant</option>
+          {modelVariants.map((variant, idx) => (
+            <option key={idx} value={variant}>
+              {variant}
             </option>
           ))}
         </select>
@@ -155,30 +205,50 @@ const PanelForm = () => {
         </div>
         <div>
           <label className="block font-medium mb-1">Location</label>
-          <input
-            type="text"
+          <select
             name="location"
             value={form.location}
             onChange={handleChange}
-            placeholder="e.g. Karachi"
+            className="w-full border rounded-2xl p-2"
+          >
+            <option value="">Select location</option>
+            {locations.map((loc) => (
+              <option key={loc._id} value={loc.location}>
+                {loc.location}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div>
+        <label className="block font-medium mb-1">Availability</label>
+        <select
+          name="availability"
+          value={form.availability}
+          onChange={handleChange}
+          className="w-full border rounded-2xl p-2"
+        >
+          <option value="">Select availability</option>
+          <option value="Ready Stock">Ready Stock</option>
+          <option value="Delivery">Delivery</option>
+        </select>
+      </div>
+
+      {form.availability === "Delivery" && (
+        <div>
+          <label className="block font-medium mb-1">
+            Expected Delivery Date
+          </label>
+          <input
+            type="date"
+            name="deliveryDate"
+            value={form.deliveryDate}
+            onChange={handleChange}
             className="w-full border rounded-2xl p-2"
           />
         </div>
-      </div>
-   <div>
-  <label className="block font-medium mb-1">Availability</label>
-  <select
-    name="availability"
-    value={form.availability}
-    onChange={handleChange}
-    className="w-full border rounded-2xl p-2"
-  >
-    <option value="">Select availability</option>
-    <option value="Ready Stock">Ready Stock</option>
-    <option value="Delivery">Delivery</option>
-  </select>
-</div>
-      <div>
+      )}
+      <div className="mt-6">
         <button
           type="submit"
           className="w-full rounded-2xl bg-green-600 text-white py-2  hover:bg-green-700 transition-all"

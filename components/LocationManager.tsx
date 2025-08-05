@@ -1,45 +1,50 @@
 "use client";
 
+import { createLocation, getAllLocations } from "@/app/hooks/useLocations";
 import { Check, Pencil, Trash2, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function LocationManager() {
     const [location, setLocation] = useState("")
-    const [locations, setLocations] = useState([
-        "EX-KHI",
-        "EX-CHISTIYA",
-        "EX-ISL",
-        "EX-MTN",
-        "EX-LHR",
-        "EX-DADU",
-        "EX-OKR",
-        "EX-FSD",
-        "EX-GRWL",
-    ])
+    const [locations, setLocations] = useState<{ _id: string; location: string }[]>([]);
     const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editedLocation, setEditedLocation] = useState("");
-    const handleAdd = () => {
-        if(location.trim()){
-            setLocations((prev) => [...prev, location.trim()]);
-            setLocation("");
-        }
+  useEffect(()=>{
+    const fetch = async () => {
+      try {
+        const loc = await getAllLocations();
+        setLocations(loc);
+      } catch (error) {
+        console.error("Error fetching locations:", error);
+      }
+    };
+    fetch();
+  },[]);
+      const handleAdd = async () => {
+    if (!location.trim()) return;
+    try {
+      const added = await createLocation(location.trim());
+      setLocations((prev) => [...prev, added]);
+      setLocation("");
+    } catch (err: any) {
+      alert(err.message || "Failed to add");
     }
+  };
     const handleDelete = (index:number) => {
         setLocations((prev)=> prev.filter((_, i)=> i !== index));
     }
     const handleEditClick = (index: number) => {
         setEditIndex(index);
-        setEditedLocation(locations[index]);
+        setEditedLocation(locations[index].location);
       };
-      const handleEditSave = () => {
-        if (editedLocation.trim()) {
-          const updated = [...locations];
-          updated[editIndex!] = editedLocation.trim();
-          setLocations(updated);
-          setEditIndex(null);
-          setEditedLocation("");
-        }
-      };
+   const handleEditSave = () => {
+    if (!editedLocation.trim()) return;
+    const updated = [...locations];
+    updated[editIndex!] = { ...updated[editIndex!], location: editedLocation.trim() };
+    setLocations(updated); // optionally send to backend
+    setEditIndex(null);
+    setEditedLocation("");
+  };
       const handleCancelEdit = () => {
         setEditIndex(null);
         setEditedLocation("");
@@ -74,7 +79,7 @@ export default function LocationManager() {
       <div className="w-[80%] md:w-[100%] space-y-2">
         {locations.map((loc, index) => (
           <div
-            key={index}
+            key={loc._id}
             className="flex justify-between items-center bg-gray-100 px-4 py-3 rounded shadow-sm"
           >
             {editIndex === index ? (
@@ -100,7 +105,7 @@ export default function LocationManager() {
               </div>
             ) : (
               <>
-                <span className="font-medium">{loc}</span>
+                <span className="font-medium">{loc.location}</span>
                 <div className="flex items-center gap-3">
                   <Pencil
                     className="text-green-600 cursor-pointer"

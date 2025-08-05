@@ -12,7 +12,7 @@ export const createPanelPost = async (payload: {
   availability: string;
 }) => {
   const token = getToken();
-  const res = await fetch("http://localhost:8001/api/app/panelPost", {
+  const res = await fetch("http://localhost:8001/api/app/post", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
