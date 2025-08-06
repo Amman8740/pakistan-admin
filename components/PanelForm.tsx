@@ -1,7 +1,7 @@
 "use client";
 import { getBrandsByAdmin } from "@/app/hooks/useBrands";
 import { getAllLocations } from "@/app/hooks/useLocations";
-import { createPanelPost } from "@/app/hooks/usePanel";
+import { createPost } from "@/app/hooks/usePanel";
 import { useEffect, useState } from "react";
 type BrandWithModels = {
   _id: string;
@@ -85,17 +85,18 @@ const PanelForm = () => {
     e.preventDefault();
     const [min, max] = form.priceRange.split("-").map((v) => Number(v.trim()));
     try {
-      await createPanelPost({
+      await createPost({
         type: form.type,
         brand: form.brand,
         name: form.name,
         container: form.container,
-
+        variant: form.variant,
         quantity: Number(form.quantity),
         priceMin: min,
         priceMax: max,
         location: form.location,
         availability: form.availability,
+        deliveryDate: form.availability === "Delivery" ? form.deliveryDate : undefined,
       });
       alert("Panel post created!");
     } catch (err: any) {

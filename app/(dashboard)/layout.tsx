@@ -17,7 +17,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <SplashScreen>
       <div className="flex min-h-screen relative">
-        <Sidebar isOpen={isSidebarOpen} />
+        <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen}/>
         {isSidebarOpen && (
           <div
             className="fixed inset-0 bg-black opacity-30 z-30"
