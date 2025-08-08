@@ -2,6 +2,7 @@
 import { getBrandsByAdmin } from "@/app/hooks/useBrands";
 import { getAllLocations } from "@/app/hooks/useLocations";
 import { createPost } from "@/app/hooks/usePanel";
+
 import { useEffect, useState } from "react";
 type BrandWithModels = {
   _id: string;
@@ -9,7 +10,7 @@ type BrandWithModels = {
   category: string;
   models: { modelName: string; modelDetail?: string }[];
 };
-const PanelForm = () => {
+const PanelForm = ({category}:{category: string}) => {
   const [modelNames, setModelNames] = useState<string[]>([]);
   const [modelVariants, setModelVariants] = useState<string[]>([]);
   const [allModels, setAllModels] = useState<BrandWithModels[0]["models"]>([]);
@@ -18,7 +19,8 @@ const PanelForm = () => {
     []
   );
   const [form, setForm] = useState({
-    type: "Seller",
+    type: "seller",
+    category: category,
     brand: "",
     name: "",
     variant: "",
@@ -87,6 +89,7 @@ const PanelForm = () => {
     try {
       await createPost({
         type: form.type,
+        category: category,
         brand: form.brand,
         name: form.name,
         container: form.container,
@@ -113,8 +116,8 @@ const PanelForm = () => {
           onChange={handleChange}
           className="w-full border rounded-2xl p-2"
         >
-          <option value="Seller">Seller</option>
-          <option value="Buyer">Buyer</option>
+          <option value="seller">Seller</option>
+          <option value="buyer">Buyer</option>
         </select>
       </div>
       <div>

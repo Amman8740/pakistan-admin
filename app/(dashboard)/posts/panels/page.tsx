@@ -24,6 +24,7 @@ export default function PanelPostsPage() {
         setLoading(false);
       }
     };
+    console.log(fetchPosts())
     fetchPosts();
   },[])
   return (
@@ -38,7 +39,7 @@ export default function PanelPostsPage() {
             key={post._id}
             id={post._id}
             title={post.name}
-            price={post.price?.min || 0}
+            price={post.price || 0}
             category="panels"
             isPriceValid={!!post.price}
             onEdit={() => console.log("Edit", post._id)}

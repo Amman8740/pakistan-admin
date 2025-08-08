@@ -11,7 +11,7 @@ type BrandWithModels = {
   models: { modelName: string; modelDetail?: string }[];
 };
 
-const BatteryForm = () => {
+const BatteryForm = ({category}: {category: string}) => {
   const [brands, setBrands] = useState<BrandWithModels[]>([]);
   const [modelNames, setModelNames] = useState<string[]>([]);
   const [modelVariants, setModelVariants] = useState<string[]>([]);
@@ -19,7 +19,7 @@ const BatteryForm = () => {
   const [locations, setLocations] = useState<{ _id: string; location: string }[]>([]);
 
   const [form, setForm] = useState({
-    type: "Seller",
+    type: "seller",
     brand: "",
     name: "",
     variant: "",
@@ -82,6 +82,7 @@ const BatteryForm = () => {
       await createPost({
         type: form.type,
         brand: form.brand,
+        category: category,
         name: form.name,
         variant: form.variant,
         quantity: Number(form.quantity),
@@ -107,8 +108,8 @@ const BatteryForm = () => {
           onChange={handleChange}
           className="w-full border rounded-2xl p-2"
         >
-          <option value="Seller">Seller</option>
-          <option value="Buyer">Buyer</option>
+          <option value="seller">Seller</option>
+          <option value="buyer">Buyer</option>
         </select>
       </div>
 

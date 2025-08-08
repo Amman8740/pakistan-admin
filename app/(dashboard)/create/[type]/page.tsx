@@ -44,9 +44,9 @@ export default function CreatePage ({params}: Props) {
         </div>
   
         <div className="bg-white rounded-xl shadow p-6">
-          {type === "panel" && <PanelForm />}
-          {type === "inverter" && <InverterForm />}
-          {type === "battery" && <BatteryForm />}
+          {type === "panel" && <PanelForm category="panels"/>}
+          {type === "inverter" && <InverterForm category="inverters"/>}
+          {type === "battery" && <BatteryForm category="batteries"/>}
         </div>
       </div>
   

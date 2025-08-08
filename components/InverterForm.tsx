@@ -11,7 +11,7 @@ type BrandWithModels = {
   models: { modelName: string; modelDetail?: string }[];
 };
 
-const InverterForm = () => {
+const InverterForm = ({category}: {category: string}) => {
   const [brands, setBrands] = useState<BrandWithModels[]>([]);
   const [modelNames, setModelNames] = useState<string[]>([]);
   const [modelVariants, setModelVariants] = useState<string[]>([]);
@@ -21,7 +21,7 @@ const InverterForm = () => {
   );
 
   const [form, setForm] = useState({
-    type: "Seller",
+    type: "seller",
     brand: "",
     name: "",
     variant: "",
@@ -83,6 +83,7 @@ const InverterForm = () => {
     try {
       await createPost({
         type: form.type,
+        category: category,
         brand: form.brand,
         name: form.name,
         variant: form.variant,
@@ -109,8 +110,8 @@ const InverterForm = () => {
           onChange={handleChange}
           className="w-full border rounded-2xl p-2"
         >
-          <option value="Seller">Seller</option>
-          <option value="Buyer">Buyer</option>
+          <option value="seller">Seller</option>
+          <option value="buyer">Buyer</option>
         </select>
       </div>
 

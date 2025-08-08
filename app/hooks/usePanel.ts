@@ -3,6 +3,7 @@ const BASE_URL = "http://localhost:8001"
 
 export const createPost = async (payload: {
   type: string;
+  category: string;
   brand: string;
   name: string;
   variant: string;
