@@ -60,3 +60,38 @@ export const getAllPosts = async ({
     meta: json.meta,
   };
 };
+export const updatePost = async (id: string, updateData: any) => {
+  const token = getToken();
+  if (!token) throw new Error("No token provided");
+
+  const res = await fetch(`${BASE_URL}/api/app/updatepost/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(updateData),
+  });
+
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.message || "Failed to update post");
+  return json.data;
+};
+export const deletePost = async (id: string) => {
+  const token = getToken();
+  if (!token) throw new Error("No token found");
+
+  const res = await fetch(`${BASE_URL}/api/app/deletepost/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.message || "Failed to delete post");
+  }
+
+  return json.data;
+};
