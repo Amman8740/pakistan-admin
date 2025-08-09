@@ -1,5 +1,5 @@
 import { getToken } from "@/lib/api";
-const BASE_URL = "http://localhost:8001"; // Update with your actual API base URL
+const BASE_URL = "https://pmssolar-production.up.railway.app"; // Update with your actual API base URL
 
 export const getAllLocations = async () => {
     const token = getToken();

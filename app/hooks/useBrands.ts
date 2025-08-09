@@ -2,7 +2,7 @@
 
 import { getToken } from "@/lib/api"; // util to get token from localStorage
 
-const BASE_URL = "http://localhost:8001"; // or your production URL
+const BASE_URL = "https://pmssolar-production.up.railway.app"; // or your production URL
 
 export const getAllBrands = async () => {
     const token = getToken();

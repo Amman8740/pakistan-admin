@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getToken, saveToken } from "@/lib/api";
-const BASE_URL = "http://localhost:8001"; // Update with your actual API base URL
+const BASE_URL = "https://pmssolar-production.up.railway.app"; // Update with your actual API base URL
 
 export const useAdminLogin = () => {
     const [loading, setLoading] = useState(false);
