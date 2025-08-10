@@ -65,6 +65,7 @@ export default function DashboardHome() {
       title="Add Pdf"
       icon={<File size={20} />}
       className="bg-gray-100 cursor-pointer hover:bg-gray-200 transition-all duration-300 ease-in-out shadow-lg transform hover:scale-105"
+      onClick={()=> router.push('/add-pdf')}
     />
     <OverViewCard
       title="Add Market"

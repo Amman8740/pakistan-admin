@@ -8,7 +8,7 @@ type BrandWithModels = {
   _id: string;
   brandName: string;
   category: string;
-  models: { modelName: string; modelDetail?: string }[];
+  models: { modelName: string; modelDetail: string[] }[];
 };
 
 const BatteryForm = ({category}: {category: string}) => {
@@ -61,17 +61,23 @@ const BatteryForm = ({category}: {category: string}) => {
       setForm((prev) => ({ ...prev, name: "", variant: "" }));
     }
 
-    if (name === "name") {
-      const variants = allModels
+  if (name === "name") {
+  const variants: string[] = Array.from(
+    new Set(
+      allModels
         .filter((m) => m.modelName === value)
-        .map((m) => m.modelDetail || "");
+        .flatMap((m) => Array.isArray(m.modelDetail) ? m.modelDetail : []) // guard if optional
+        .map((v) => v.trim())
+        .filter(Boolean)
+    )
+  );
 
-      setModelVariants(variants);
-      setForm((prev) => ({
-        ...prev,
-        variant: variants[0] || "",
-      }));
-    }
+  setModelVariants(variants);
+  setForm((prev) => ({
+    ...prev,
+    variant: variants[0] ?? "",
+  }));
+}
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

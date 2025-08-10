@@ -23,7 +23,7 @@ export const getAllUsers = async () => {
     if (!response.ok) {
       console.log("Get users error:");
     }
-    return json;
+    return json.data as any[];
   } catch (err) {
     console.error("Get users error:", err);
     throw err;

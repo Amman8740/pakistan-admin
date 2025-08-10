@@ -30,7 +30,7 @@ export const getAllBrands = async () => {
 }
 type BrandModel = {
   modelName: string;
-  modelDetail: string;
+  modelDetail: string[];
 };
 
 type AddBrandPayload = {

@@ -12,8 +12,7 @@ import { getAllPosts } from "@/app/hooks/usePanel";
 export default function PanelPostsPage() {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  useEffect(()=>{
-    const fetchPosts = async () => {
+     const fetchPosts = async () => {
       try {
         const {posts} = await getAllPosts({type: "inverters"});
         setPosts(posts);
@@ -23,6 +22,7 @@ export default function PanelPostsPage() {
         setLoading(false);
       }
     }
+  useEffect(()=>{
     fetchPosts();
   },[])
   return (
@@ -32,16 +32,25 @@ export default function PanelPostsPage() {
       ) : posts.length === 0 ? (
         <p>No posts found.</p>
       ) : (
-        posts.map((post) => (
+        posts.map((p) => (
           <PostCard
-            key={post._id}
-            id={post._id}
-            title={post.name}
-            price={post.price?.min || 0}
-            category="inverters"
-            isPriceValid={!!post.price}
-            onEdit={() => console.log("Edit", post._id)}
-            onDelete={() => console.log("Delete", post._id)}
+           key={p._id}
+    id={p._id}
+    category={p.category}              // "panels" | "inverters" | "batteries"
+    title={p.name}                     // e.g., "Tiger Neo"
+    price={p.price}                    // 200000
+
+    container={p.container}            // "container" | "pallet"
+    quantity={p.quantity}              // 5
+    location={p.location}              // e.g., "EX-LHR" / "seller"
+    availability={p.availability}      // "Ready Stock" | "Delivery"
+    type={p.type}                      // "seller" | "buyer"
+    deliveryDate={p.deliveryDate}      // ISO string or ""
+
+    isActive={p.isShowing === true}    // green dot
+
+    onEdit={fetchPosts}
+    onDelete={fetchPosts}
           />
         ))
       )}
