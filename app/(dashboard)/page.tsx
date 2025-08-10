@@ -17,9 +17,36 @@ import {
   Users,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { getAllUsers } from "@/app/hooks/useAdmin";
+import { getAllPosts } from "../hooks/usePanel";
+import { useEffect, useState } from "react";
 
 export default function DashboardHome() {
+  const [totalPosts, setTotalPosts] = useState<number>(0);
+  const [totalUsers, setTotalUsers] = useState<number>(0);
+  const [activeUsers, setActiveUsers] = useState(0);
+    const [bannedUsers, setBannedUsers] = useState(0);
   const router = useRouter();
+
+   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [users, { posts }] = await Promise.all([
+          getAllUsers(),
+          getAllPosts({}),
+        ]);
+
+        setTotalUsers(users.length);
+        setActiveUsers(users.filter((u: any) => u.status === "active").length);
+        setBannedUsers(users.filter((u: any) => u.status === "banned").length);
+        setTotalPosts(posts.length);
+      } catch (err) {
+        console.error("Failed to fetch overview data:", err);
+      }
+    };
+
+    fetchData();
+  }, []);
   return (
     <div className="w-full mx-auto px-4">
        <section className="max-w-lg mx-auto mb-4 px-4">
@@ -34,26 +61,26 @@ export default function DashboardHome() {
   <section className="grid grid-cols-2 gap-3 max-w-lg mx-auto px-4 mb-4">
     <OverViewCard
       title="Total Users"
-      value={1500}
+      value={totalUsers}
       icon={<Users size={35} className="text-blue-500" />}
       className="bg-blue-100 cursor-pointer hover:bg-blue-200 transition-all duration-300 ease-in-out shadow-lg transform hover:scale-105"
       onClick={() => router.push("/users")}
     />
     <OverViewCard
       title="Total Posts"
-      value={300}
+      value={totalPosts}
       icon={<DockIcon size={35} className="text-yellow-500" />}
       className="bg-yellow-100 cursor-pointer hover:bg-yellow-200 transition-all duration-300 ease-in-out shadow-lg transform hover:scale-105"
     />
     <OverViewCard
       title="Active Users"
-      value={1200}
+      value={activeUsers}
       icon={<ActivityIcon size={35} />}
       className="bg-green-100 cursor-pointer hover:bg-green-200 transition-all duration-300 ease-in-out shadow-lg transform hover:scale-105"
     />
     <OverViewCard
       title="Banned Users"
-      value={50}
+      value={bannedUsers}
       icon={<Users size={35} className="text-red-500" />}
       className="bg-red-100 cursor-pointer hover:bg-red-200 transition-all duration-300 ease-in-out shadow-lg transform hover:scale-105"
     />
