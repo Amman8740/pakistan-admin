@@ -48,8 +48,8 @@ useEffect(() => {
   fetchData();
 }, []);
   return (
-    <div className="w-full mx-auto px-4">
-       <section className="max-w-lg mx-auto mb-4 px-4">
+    <div className="w-full mx-auto px-4 lg:max-w-[70%]">
+       <section className="w-full mx-auto mb-4 px-4">
     <OverViewCard
       title="Reports"
       icon={<BlocksIcon size={25} className="text-red-500" />}
@@ -58,7 +58,7 @@ useEffect(() => {
   </section>
 
   {/* Users & Posts Section */}
-  <section className="grid grid-cols-2 gap-3 max-w-lg mx-auto px-4 mb-4">
+  <section className="grid grid-cols-2 gap-3 w-full mx-auto px-4 mb-4">
     <OverViewCard
   title="Total Users"
   value={totalUsers}
@@ -73,6 +73,7 @@ useEffect(() => {
   value={totalPosts}
   icon={<DockIcon size={35} className="text-yellow-500" />}
   className="bg-yellow-100 cursor-pointer hover:bg-yellow-200 transition-all duration-300 ease-in-out shadow-lg transform hover:scale-105"
+  onClick={()=>router.push('/posts/all')}
   verticalOnMobile
 />
 
@@ -81,6 +82,7 @@ useEffect(() => {
   value={activeUsers}
   icon={<ActivityIcon size={35} />}
   className="bg-green-100 cursor-pointer hover:bg-green-200 transition-all duration-300 ease-in-out shadow-lg transform hover:scale-105"
+  onClick={() => router.push("/users?status=active")}
   verticalOnMobile
 />
 
@@ -89,12 +91,13 @@ useEffect(() => {
   value={bannedUsers}
   icon={<Users size={35} className="text-red-500" />}
   className="bg-red-100 cursor-pointer hover:bg-red-200 transition-all duration-300 ease-in-out shadow-lg transform hover:scale-105"
+  onClick={() => router.push("/users?status=banned")}
   verticalOnMobile
 />
   </section>
 
   {/* Actions Section */}
-  <section className="grid grid-cols-2 gap-3 max-w-lg mx-auto px-4 mb-4">
+  <section className="grid grid-cols-2 gap-3 w-full mx-auto px-4 mb-4">
     <OverViewCard
       title="Add Pdf"
       icon={<File size={20} />}
@@ -145,24 +148,24 @@ useEffect(() => {
     />
   </section>
       {/* Add Brands Section */}
-<section className="max-w-lg mx-auto mb-4 px-4">
+<section className="w-full mx-auto mb-4 px-4">
   <h2 className="text-lg font-semibold text-green-600 mb-4">Add brands</h2>
   <div className="grid grid-cols-3 gap-2">
     <button
       onClick={() => router.push("/brands/panels")}
-      className="bg-gray-100 rounded-xl py-2 text-sm font-medium hover:bg-gray-200 transition-all"
+      className="bg-gray-100 rounded-xl py-2 text-sm font-medium hover:bg-gray-200 transition-all cursor-pointer"
     >
       Panels
     </button>
     <button
       onClick={() => router.push("/brands/inverters")}
-      className="bg-gray-100 rounded-xl py-2 text-sm font-medium hover:bg-gray-200 transition-all"
+      className="bg-gray-100 rounded-xl py-2 text-sm font-medium hover:bg-gray-200 transition-all cursor-pointer"
     >
       Inverters
     </button>
     <button
       onClick={() => router.push("/brands/batteries")}
-      className="bg-gray-100 rounded-xl py-2 text-sm font-medium hover:bg-gray-200 transition-all"
+      className="bg-gray-100 rounded-xl py-2 text-sm font-medium hover:bg-gray-200 transition-all cursor-pointer"
     >
       Batteries
     </button>
@@ -170,7 +173,7 @@ useEffect(() => {
 </section>
 
 {/* Posts Dropdown, Profile Verifications, Notifications */}
-<section className="max-w-lg mx-auto flex flex-col gap-3 px-4">
+<section className="w-full mx-auto flex flex-col gap-3 px-4">
   <div>
     <PostsDropdownCard />
   </div>

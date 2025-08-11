@@ -14,11 +14,13 @@ export default function Navbar ({toggleSidebar}: NavbarProps){
             <button className=" text-gray-700" onClick={toggleSidebar}>
                 <Menu className="cursor-pointer" size={24}  aria-label="toggle sidebar"/>
             </button>
-            <h1 className="text-lg font-semibold text-green-700 hidden md:block">Admin</h1>
+            <h1
+            onClick={()=>router.push("/")}
+            className="text-lg font-semibold text-green-700 hidden md:block cursor-pointer">Admin</h1>
             <div className="flex items-center gap-2 sm:gap-4">
                 <button 
                 onClick={handleCreate}
-                className="bg-green-600 hover:bg-green-700 text-white p-2 sm:px-3 sm:py-2 rounded-md shadow transition text-sm">
+                className="bg-green-600 hover:bg-green-700 text-white p-2 sm:px-3 sm:py-2 rounded-md shadow transition text-sm cursor-pointer">
                     <Plus size={15} className="sm:mr-1"/>
                     <span className="hidden sm:inline">Create</span>
                 </button>
@@ -27,7 +29,7 @@ export default function Navbar ({toggleSidebar}: NavbarProps){
                     localStorage.removeItem("psm-auth");
                     router.push("/login");
                   }}
-                className="bg-red-500 hover:bg-red-600 text-white p-2 sm:px-3 sm:py-2 rounded-md shadow transition text-sm">
+                className="bg-red-500 hover:bg-red-600 text-white p-2 sm:px-3 sm:py-2 rounded-md shadow transition text-sm cursor-pointer">
                     <LogOut size={15} className="sm:mr-1"/>
                     <span className="hidden sm:inline">Logout</span>
                 </button>

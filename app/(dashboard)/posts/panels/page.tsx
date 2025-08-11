@@ -12,7 +12,7 @@ import { getAllPosts } from "@/app/hooks/usePanel";
 export default function PanelPostsPage() {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [search, setSearch] = useState("");
     const fetchPosts = async () => {
       try {
         const { posts } = await getAllPosts({type: "panels"});
@@ -27,7 +27,7 @@ export default function PanelPostsPage() {
     fetchPosts();
   },[])
   return (
-    <PostPageLayout title="Panel Posts">
+    <PostPageLayout title="Panel Posts" search={search} onSearchChange={setSearch}>
       {loading ? (
         <p>Loading...</p>
       ) : posts.length === 0 ? (
