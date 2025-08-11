@@ -1,7 +1,7 @@
 "use client";
 import { getToken } from "@/lib/api";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8001";
+const BASE_URL = "https://pmssolar-production.up.railway.app"
 
 export type BannerDTO = {
   _id: string;

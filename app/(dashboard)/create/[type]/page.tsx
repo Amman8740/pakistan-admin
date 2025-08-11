@@ -15,7 +15,7 @@ export default function CreatePage ({params}: Props) {
         notFound();
     }
     return (
-        <div className="p-6 mx-auto space-y-8 w-[90%]">
+        <div className="p-6 mx-auto space-y-8 w-full">
         <h2 className="text-2xl font-bold mb-6 capitalize">Create New</h2>
   
         {/* Shared container with one background */}
@@ -48,6 +48,14 @@ export default function CreatePage ({params}: Props) {
           {type === "inverter" && <InverterForm category="inverters"/>}
           {type === "battery" && <BatteryForm category="batteries"/>}
         </div>
+              <div className="mt-6 text-center">
+        <Link
+          href="/"
+          className="text-green-600 underline underline-offset-2 hover:text-green-700 transition-colors"
+        >
+          Go to Dashboard
+        </Link>
+      </div>
       </div>
   
     )

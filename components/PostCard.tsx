@@ -6,49 +6,33 @@ import EditPostModal from "./EditPostModal";
 import { deletePost, updatePost } from "@/app/hooks/usePanel";
 
 type PostCardProps = {
-  // ids in your DB are strings
   id: string;
   category: "panels" | "inverters" | "batteries";
-
-  title: string;          // name (e.g., "Tiger Neo")
-  price: number;          // e.g., 200000
-
-  // new fields you want to show
+  title: string;
+  price: number;
   container: "container" | "pallet" | string;
-  quantity: number;       // number of containers/pallets
-  location: string;       // e.g., "EX-LHR" or "seller"
-  availability: string;   // e.g., "Ready Stock" | "Delivery"
+  quantity: number;
+  location: string;
+  availability: string;
   type: "seller" | "buyer";
-  deliveryDate?: string;  // ISO date string or ""
-
-  // status dot on the right (green if active)
+  deliveryDate?: string;
   isActive?: boolean;
-
-  // edit/delete handlers
   onEdit: () => void;
   onDelete: () => void;
 };
 
-export default function PostCard({
-  id,
-  category,
-  title,
-  price,
-  container,
-  quantity,
-  location,
-  availability,
-  type,
-  deliveryDate,
-  isActive = true,
-  onEdit,
-  onDelete,
-}: PostCardProps) {
+export default function PostCard(props: PostCardProps) {
+  const {
+    id, category, title, price,
+    container, quantity, location, availability,
+    type, deliveryDate, isActive = true,
+    onEdit, onDelete,
+  } = props;
+
   const [showMenu, setShowMenu] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  // helpers
   const containerLabel = useMemo(() => {
     const base = container?.toLowerCase() === "pallet" ? "Pallet" : "Container";
     const q = Number.isFinite(quantity) ? quantity : 0;
@@ -59,18 +43,11 @@ export default function PostCard({
     if (!deliveryDate) return null;
     const target = new Date(deliveryDate);
     if (isNaN(+target)) return null;
-    const diffMs = target.getTime() - Date.now();
-    // round up so future same-day shows 0D -> 0
-    const d = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    const d = Math.ceil((target.getTime() - Date.now()) / 86400000);
     return d;
   }, [deliveryDate]);
 
-  const priceShort = useMemo(() => {
-    // show “20” like the mobile UI (likely in “K” or “per piece”)
-    // tweak as you prefer; here we convert to thousands if >= 1000
-    if (price >= 1000) return Math.round(price / 1000);
-    return price;
-  }, [price]);
+  const priceShort = useMemo(() => (price >= 1000 ? Math.round(price / 1000) : price), [price]);
 
   const initialData = {
     price,
@@ -86,8 +63,8 @@ export default function PostCard({
       await updatePost(id, updatedData);
       setShowEditModal(false);
       onEdit();
-    } catch (error) {
-      console.error("Update failed:", error);
+    } catch (e) {
+      console.error("Update failed:", e);
       alert("Failed to update post");
     }
   };
@@ -98,110 +75,103 @@ export default function PostCard({
       setDeleting(true);
       await deletePost(id);
       onDelete();
-    } catch (error: any) {
-      alert(error.message || "Failed to delete post");
+    } catch (e: any) {
+      alert(e.message || "Failed to delete post");
     } finally {
       setDeleting(false);
     }
   };
 
   return (
-    <div className="w-full bg-gray-100 p-4 rounded shadow-sm flex justify-between items-start relative">
-      {/* left: title + badges */}
-      <Link href={`/posts/${category}/${id}`} className="block flex-1">
-        <div>
-          <p className="font-semibold text-lg">{title}</p>
+    <div className="w-full bg-gray-100 p-4 rounded-xl shadow-sm relative">
+      {/* Top row: title + price/kebab (stacks nicely on mobile) */}
+      <div className="flex items-start justify-between gap-3">
+        <Link href={`/posts/${category}/${id}`} className="min-w-0">
+          <p className="font-semibold text-base sm:text-lg truncate">{title}</p>
+        </Link>
 
-          {/* badges row */}
-          <div className="flex items-center gap-2 mt-2 text-xs font-medium">
-            {/* Blue: containers */}
-            <span className="px-2 py-0.5 rounded-full bg-blue-500 text-white">
-              {containerLabel}
-            </span>
+        <div className="flex items-start gap-3">
+          {/* price + pills */}
+          <div className="text-right">
+            <p className="font-semibold text-gray-800 leading-none">{priceShort}</p>
 
-            {/* Green: location */}
-            {location && (
-              <span className="px-2 py-0.5 rounded-full bg-green-500 text-white uppercase">
-                {location}
+            <div className="mt-1 flex items-center justify-end gap-2 text-[11px] sm:text-xs">
+              <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-white capitalize">
+                {type}
               </span>
-            )}
 
-            {/* Red: availability */}
-            {availability && (
-              <span className="px-2 py-0.5 rounded-full bg-red-500 text-white">
-                {availability}
-              </span>
+              {availability === "Delivery" && daysLeft !== null && (
+                <span className="px-2 py-0.5 rounded-full bg-gray-200 text-gray-800 flex items-center gap-1">
+                  <Clock size={14} /> {Math.max(daysLeft, 0)}D
+                </span>
+              )}
+            </div>
+
+            {/* active dot */}
+            <span
+              className={`inline-block w-3 h-3 mt-2 rounded-full ${
+                isActive ? "bg-green-500" : "bg-red-500"
+              }`}
+            />
+          </div>
+
+          {/* kebab */}
+          <div className="relative">
+            <button
+              onClick={() => setShowMenu((v) => !v)}
+              aria-label="More actions"
+              className="p-1.5 rounded-md hover:bg-white/60"
+            >
+              <MoreVertical size={18} />
+            </button>
+
+            {showMenu && (
+              <div className="absolute right-0 mt-1 w-28 bg-white border rounded-md shadow-lg z-10">
+                <button
+                  onClick={() => {
+                    setShowMenu(false);
+                    setShowEditModal(true);
+                  }}
+                  className="flex items-center px-3 py-2 text-sm hover:bg-gray-100 w-full"
+                >
+                  <Edit size={14} className="mr-2" /> Edit
+                </button>
+                <button
+                  onClick={() => {
+                    setShowMenu(false);
+                    handleDelete();
+                  }}
+                  className="flex items-center px-3 py-2 text-sm hover:bg-gray-100 text-red-500 w-full"
+                  disabled={deleting}
+                >
+                  <Trash size={14} className="mr-2" /> {deleting ? "..." : "Delete"}
+                </button>
+              </div>
             )}
           </div>
         </div>
-      </Link>
-
-      {/* right: price + type + delivery days + status dot */}
-      <div className="text-right mr-5">
-        <p className="font-semibold text-gray-800">{priceShort}</p>
-
-        <div className="mt-1 flex items-center justify-end gap-2 text-xs">
-          {/* type pill */}
-          <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-white capitalize">
-            {type}
-          </span>
-
-          {/* delivery date (days) */}
-          {availability === "Delivery" && daysLeft !== null && (
-            <span className="px-2 py-0.5 rounded-full bg-gray-200 text-gray-800 flex items-center gap-1">
-              <Clock size={14} /> {Math.max(daysLeft, 0)}D
-            </span>
-          )}
-        </div>
-
-        {/* active dot */}
-        <span
-          className={`inline-block w-3 h-3 mt-2 rounded-full ${
-            isActive ? "bg-green-500" : "bg-red-500"
-          }`}
-        />
       </div>
 
-      {/* menu */}
-      <div className="absolute top-4 right-4 z-10">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowMenu(!showMenu);
-          }}
-        >
-          <MoreVertical size={20} />
-        </button>
+      {/* Badges row (wrap on mobile) */}
+      <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] sm:text-xs font-medium">
+        <span className="px-2 py-0.5 rounded-full bg-blue-500 text-white">
+          {containerLabel}
+        </span>
 
-        {showMenu && (
-          <div className="absolute right-0 mt-2 w-24 bg-white border rounded shadow-lg z-10">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowMenu(false);
-                setShowEditModal(true);
-              
-              }}
-              className="flex items-center px-3 py-2 text-sm hover:bg-gray-100 w-full"
-            >
-              <Edit size={14} className="mr-2" /> Edit
-            </button>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setShowMenu(false);
-                handleDelete();
-              }}
-              className="flex items-center px-3 py-2 text-sm hover:bg-gray-100 text-red-500 w-full"
-              disabled={deleting}
-            >
-              <Trash size={14} className="mr-2" /> {deleting ? "..." : "Delete"}
-            </button>
-          </div>
+        {location && (
+          <span className="px-2 py-0.5 rounded-full bg-green-500 text-white uppercase">
+            {location}
+          </span>
+        )}
+
+        {availability && (
+          <span className="px-2 py-0.5 rounded-full bg-red-500 text-white">
+            {availability}
+          </span>
         )}
       </div>
 
-      {/* modal */}
+      {/* Edit modal */}
       <EditPostModal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}

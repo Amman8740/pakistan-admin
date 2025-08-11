@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getBrandsByAdmin } from "@/app/hooks/useBrands";
 import { getAllLocations } from "@/app/hooks/useLocations";
 import { createPost } from "@/app/hooks/usePanel";
+import { useRouter } from "next/navigation";
 
 type BrandWithModels = {
   _id: string;
@@ -19,7 +20,7 @@ const InverterForm = ({category}: {category: string}) => {
   const [locations, setLocations] = useState<{ _id: string; location: string }[]>(
     []
   );
-
+  const router = useRouter()
   const [form, setForm] = useState({
     type: "seller",
     brand: "",
@@ -103,6 +104,7 @@ const InverterForm = ({category}: {category: string}) => {
         deliveryDate: form.availability === "Delivery" ? form.deliveryDate : undefined,
       });
       alert("Inverter post created!");
+      router.push("/")
     } catch (err: any) {
       alert(err.message || "Submission failed");
     }
