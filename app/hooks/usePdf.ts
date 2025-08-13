@@ -12,7 +12,7 @@ export const getPdfs = async (params?: { page?: number; limit?: number; userId?:
   if (params?.limit) qs.set("limit", String(params.limit));
   if (params?.userId) qs.set("userId", params.userId);
 
-  const res = await fetch(`${BASE_URL}/api/app/pdfs?${qs.toString()}`, {
+  const res = await fetch(`${BASE_URL}/api/app/getpdfs?${qs.toString()}`, {
     method: "GET",
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -33,7 +33,7 @@ export const uploadPdf = async (file: File) => {
   const fd = new FormData();
   fd.append("file", file);
 
-  const res = await fetch(`${BASE_URL}/api/app/pdf`, {
+  const res = await fetch(`${BASE_URL}/api/app/uploadpdf`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
     body: fd,
