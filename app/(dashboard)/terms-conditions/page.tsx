@@ -1,62 +1,68 @@
 "use client";
-import { useState } from "react";
 
-export default function PrivacyPolicyPage() {
-    const [terms, setTerms] = useState(`
-        <p>At Pakistan Solar Market (PSM), we are committed to protecting your privacy...</p>
-      
-        <h3><strong>Information We Collect</strong></h3>
-        <p>We may collect the following types of information:</p>
-      
-        <strong>Personal Information:</strong>
-        <p>When you register or create an account...</p>
-      
-        <strong>Device and Usage Data:</strong>
-        <p>We automatically collect information about devices...</p>
-               <p>At Pakistan Solar Market (PSM), we are committed to protecting your privacy...</p>
-      
-        <h3><strong>Information We Collect</strong></h3>
-        <p>We may collect the following types of information:</p>
-      
-        <strong>Personal Information:</strong>
-        <p>When you register or create an account...</p>
-      
-        <strong>Device and Usage Data:</strong>
-        <p>We automatically collect information about devices...</p>
-      `);
+import { getTerms, updateTerms } from "@/app/hooks/useTerms";
+import { useState, useEffect } from "react";
 
+export default function TermsPage() {
+  const [terms, setTerms] = useState("");
   const [editedTerm, setEditedTerm] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const handleUpdate = () => {
-    if (editedTerm.trim()) {
-      setTerms(editedTerm);
+  useEffect(() => {
+    const fetchTerms = async () => {
+      try {
+        setLoading(true);
+        const data = await getTerms();
+        setTerms(data.content);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTerms();
+  }, []);
+
+  const handleUpdate = async () => {
+    if (!editedTerm.trim()) return;
+
+    try {
+      const updated = await updateTerms(editedTerm);
+      setTerms(updated.content);
       setEditedTerm("");
-      alert("Privacy policy updated!");
+      alert("Terms & Conditions updated successfully!");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to update terms");
     }
   };
 
+  if (loading) {
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  }
+
   return (
     <div className="relative h-screen flex flex-col">
-      {/* Header */}
       <div className="p-2">
         <h1 className="text-xl font-bold text-center">Terms & Conditions</h1>
       </div>
 
-      {/* Fixed Current Policy Section */}
       <div className="sticky top-[64px] z-20 p-4">
         <h2 className="text-xl font-semibold mb-2">Current Terms & Conditions</h2>
       </div>
+
       <div
-          className="text-gray-800 bg-gray-100 m-2 p-4 rounded-lg overflow-y-auto"
-          dangerouslySetInnerHTML={{ __html: terms }}/>
-      {/* Fixed Edit Section */}
+        className="text-gray-800 bg-gray-100 m-2 p-4 rounded-lg overflow-y-auto"
+        dangerouslySetInnerHTML={{ __html: terms }}
+      />
+
       <div className="sticky bottom-0 z-30 p-4">
         <h3 className="text-xl font-semibold mb-2">Edit Terms & Conditions</h3>
         <textarea
           value={editedTerm}
           onChange={(e) => setEditedTerm(e.target.value)}
           rows={4}
-          placeholder="Enter updated privacy policy here..."
+          placeholder="Enter updated terms here..."
           className="w-full border border-gray-300 rounded-lg p-2 mb-3 resize-none focus:outline-none focus:ring-2 focus:ring-green-500"
         />
         <button

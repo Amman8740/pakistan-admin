@@ -1,6 +1,6 @@
 "use client";
 
-import { banUser, getAllUsers } from "@/app/hooks/useAdmin";
+import { banUser, getAllUsers, unbanUser } from "@/app/hooks/useAdmin";
 import UserCard from "@/components/UserCard";
 import { useEffect, useState } from "react";
 type User = {
@@ -47,10 +47,16 @@ export default function UserPage() {
       alert(err.message || "Failed to ban user");
     }
   };
-  const handleUnban = (user: User) => {
+  const handleUnban = async (user: User) => {
+  try {
+    await unbanUser(user._id); // call the backend
     setBannedUsers((prev) => prev.filter((u) => u._id !== user._id));
     setActiveUsers((prev) => [...prev, { ...user, status: "active" }]);
-  };
+  } catch (err: any) {
+    console.error("Unban failed:", err);
+    alert(err.message || "Failed to unban user");
+  }
+};
 
   const displayedUsers = activeTab === "active" ? activeUsers : bannedUsers;
 

@@ -51,7 +51,7 @@ export const replacePdf = async (id: string, file: File) => {
   const fd = new FormData();
   fd.append("file", file);
 
-  const res = await fetch(`${BASE_URL}/api/app/pdf/${id}`, {
+  const res = await fetch(`${BASE_URL}/api/app/replacepdf/${id}`, {
     method: "PUT",
     headers: { Authorization: `Bearer ${token}` },
     body: fd,
@@ -66,7 +66,7 @@ export const deletePdf = async (id: string) => {
   const token = getToken();
   if (!token) throw new Error("No auth token found");
 
-  const res = await fetch(`${BASE_URL}/api/app/pdf/${id}`, {
+  const res = await fetch(`${BASE_URL}/api/app/deletepdf/${id}`, {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
   });

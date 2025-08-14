@@ -18,7 +18,7 @@ export const getBanners = async (category?: string) => {
   const token = getToken();
   if (!token) throw new Error("No auth token");
 
-  const url = new URL(`${BASE_URL}/api/app/banners`);
+  const url = new URL(`${BASE_URL}/api/app/getbanners`);
   if (category) url.searchParams.set("category", category);
 
   const res = await fetch(url.toString(), { headers: { Authorization: `Bearer ${token}` } });

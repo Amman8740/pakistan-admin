@@ -67,3 +67,18 @@ export const banUser = async (userId: string) => {
   if (!res.ok) throw new Error(json.message || "Failed to ban user");
   return json;
 };
+export const unbanUser = async (userId: string) => {
+  const token = getToken();
+  if (!token) throw new Error("No auth token found");
+
+  const res = await fetch(`${BASE_URL}/api/admin/unbanuser/${userId}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.message || "Failed to unban user");
+  return json;
+};
