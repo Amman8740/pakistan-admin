@@ -1,7 +1,7 @@
 "use client";
 import { getToken } from "@/lib/api";
 
-const BASE_URL = "https://pmssolar-production.up.railway.app";
+const BASE_URL = "http://localhost:8001";
 
 export const getPdfs = async (params?: { page?: number; limit?: number; userId?: string }) => {
   const token = getToken();

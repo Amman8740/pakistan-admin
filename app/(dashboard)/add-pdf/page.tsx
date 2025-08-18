@@ -6,7 +6,19 @@ import { PdfCard } from "@/components/PdfCard";
 import { getPdfs, uploadPdf, replacePdf, deletePdf } from "@/app/hooks/usePdf";
 
 type PdfItem = { id: string; name: string; url: string };
+const BACKEND_BASE =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8001";
 
+// make absolute and collapse extra slashes but keep protocol slashes
+const abs = (u: string) => {
+  if (!u) return u;
+  if (/^https?:\/\//i.test(u)) return u;
+  const joined = `${BACKEND_BASE}${u.startsWith("/") ? "" : "/"}${u}`;
+  return joined
+    .replace("://", "__PROTO__")
+    .replace(/\/{2,}/g, "/")
+    .replace("__PROTO__", "://");
+};
 export default function AddPdfPage() {
   const [items, setItems] = useState<PdfItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +30,7 @@ export default function AddPdfPage() {
     (async () => {
       try {
         const { items } = await getPdfs({ page: 1, limit: 24 });
-        setItems(items.map(i => ({ id: i._id, name: i.name, url: i.url })));
+        setItems(items.map(i => ({ id: i._id, name: i.name, url: abs(i.url) })));
       } catch (err) {
         console.error("Failed to load PDFs:", err);
       } finally {
@@ -39,7 +51,7 @@ export default function AddPdfPage() {
       const created = await Promise.all(toUpload.map(file => uploadPdf(file)));
       setItems(prev => [
         ...prev,
-        ...created.map((d: any) => ({ id: d._id, name: d.name, url: d.url })),
+        ...created.map((d: any) => ({ id: d._id, name: d.name, url: abs(d.url) })),
       ]);
     } catch (err: any) {
       console.error("Upload failed:", err);
@@ -56,7 +68,7 @@ export default function AddPdfPage() {
     if (file.type !== "application/pdf") return;
     try {
       const updated = await replacePdf(id, file);
-      setItems(prev => prev.map(it => (it.id === id ? { id, name: updated.name, url: updated.url } : it)));
+      setItems(prev => prev.map(it => (it.id === id ? { id, name: updated.name, url: abs(updated.url) } : it)));
     } catch (err: any) {
       console.error("Replace failed:", err);
       alert(err.message || "Failed to replace PDF");
@@ -153,7 +165,7 @@ export default function AddPdfPage() {
               </button>
             </div>
             <div className="h-[80vh]">
-              <iframe src={viewer.item.url} title={viewer.item.name} className="w-full h-full" />
+              <iframe src={abs(viewer.item.url)} title={viewer.item.name} className="w-full h-full" />
             </div>
           </div>
         </div>

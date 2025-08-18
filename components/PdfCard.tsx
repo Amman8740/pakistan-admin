@@ -1,6 +1,20 @@
-"use client"
+"use client";
 import { Replace, Trash2 } from "lucide-react";
 import { useRef } from "react";
+
+const BACKEND_BASE =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8001";
+
+// Make absolute and collapse accidental double slashes (keep protocol slashes)
+const abs = (u: string) => {
+  if (!u) return u;
+  if (/^https?:\/\//i.test(u)) return u;
+  const joined = `${BACKEND_BASE}${u.startsWith("/") ? "" : "/"}${u}`;
+  return joined
+    .replace("://", "__PROTO__")
+    .replace(/\/{2,}/g, "/")
+    .replace("__PROTO__", "://");
+};
 
 export function PdfCard({
   item,
@@ -9,7 +23,7 @@ export function PdfCard({
   onOpen,
 }: {
   item: { id: string; name: string; url: string };
-  onOpen: () => void; 
+  onOpen: () => void;
   onReplace: (file: File) => void;
   onRemove: () => void;
 }) {
@@ -23,7 +37,7 @@ export function PdfCard({
   };
 
   return (
-       <div className="relative w-full rounded-2xl bg-gray-100 shadow-sm border border-gray-200 overflow-hidden">
+    <div className="relative w-full rounded-2xl bg-gray-100 shadow-sm border border-gray-200 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
         <div className="text-sm font-semibold text-gray-800 truncate" title={item.name}>
           {item.name}
@@ -54,7 +68,11 @@ export function PdfCard({
 
       {/* Click body to open viewer */}
       <button onClick={onOpen} className="block w-full h-[180px] bg-white text-left" title="Open PDF">
-        <iframe src={item.url} className="w-full h-full pointer-events-none" />
+        <iframe
+          src={abs(item.url)}
+          title={item.name}
+          className="w-full h-full pointer-events-none"
+        />
       </button>
 
       <input
