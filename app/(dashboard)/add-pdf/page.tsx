@@ -7,7 +7,7 @@ import { getPdfs, uploadPdf, replacePdf, deletePdf } from "@/app/hooks/usePdf";
 
 type PdfItem = { id: string; name: string; url: string };
 const BACKEND_BASE =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8001";
+  process.env.NEXT_PUBLIC_BACKEND_URL || "https://pmssolar-production.up.railway.app";
 
 // make absolute and collapse extra slashes but keep protocol slashes
 const abs = (u: string) => {
