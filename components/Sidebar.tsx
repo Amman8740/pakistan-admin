@@ -57,7 +57,9 @@ export default function Sidebar({
               icon={<Mail size={18} />}
               label="Contact Us"
               href="#"
-              onClick={()=>setIsOpen(false)}
+              onClick={()=>{
+                router.push("/contact");
+                setIsOpen(false)}}
             />
             <SidebarLink
               icon={<Landmark size={18} />}

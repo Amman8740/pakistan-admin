@@ -189,6 +189,7 @@ useEffect(() => {
     title="Notifications"
     icon={<Bell size={25} />}
     className="bg-gray-100 cursor-pointer hover:bg-gray-200 transition-all duration-300 ease-in-out shadow-lg transform hover:scale-105"
+    onClick={() => router.push("/notifications")}
   />
 </section>
 

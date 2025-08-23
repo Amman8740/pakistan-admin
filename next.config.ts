@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   },
   eslint: {
     ignoreDuringBuilds: true,
+  },
+  images: {
+    domains:['res.cloudinary.com'],
   }
 
   /* config options here */
